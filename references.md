@@ -7,3 +7,6 @@ https://www.mdpi.com/1999-4907/6/11/3899/htm
  https://www.semanticscholar.org/paper/Diameter-distribution-modelling-using-ALS.-Breidenbach-Glaeser/34e18c2034a39d42c674fd12d538020648cdb7f1  
  
  http://blogs.oregonstate.edu/geog566spatialstatistics/2019/04/19/point-pattern-analysis-of-tree-distribution-by-height-in-the-hj-andrews-forest/
+
+
+https://academic.oup.com/forestry/article/91/1/132/4209595
