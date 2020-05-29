@@ -10,3 +10,6 @@ https://www.mdpi.com/1999-4907/6/11/3899/htm
 
 
 https://academic.oup.com/forestry/article/91/1/132/4209595
+
+
+https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0058983
