@@ -31,10 +31,7 @@ params['tree_params'] = dict()
 params['tree_params']['type'] = tree_db['pine']
 params['tree_params']['fuel_perc'] = 100
 params['tree_params']['ember'] = False
-
-
  
-
 
 f = Forest(params)
 
