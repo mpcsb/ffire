@@ -16,6 +16,7 @@ class Tree():
                                    # species name, radius, burn ability, ...
         self.fuel_perc = params['fuel_perc'] # how burnt the tree is
         self.ember = params['ember']
+        self.burning = params['burning']
         self.coord = coord
 
     # def _sample_height(h=11):

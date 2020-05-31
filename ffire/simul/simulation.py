@@ -5,7 +5,7 @@ Created on Fri May 29 21:31:55 2020
 @author: Miguel
 """
 #%%
-# import time
+ 
 import os
 os.chdir(r'C:\Users\Miguel\Documents\repos\ffire\ffire')
 
@@ -15,6 +15,7 @@ from resources import soil_db as sb
 
 tree_db = tb.tree_db
 soil_db = sb.soil_db
+
 
 params = dict()
 
@@ -31,10 +32,10 @@ params['tree_params'] = dict()
 params['tree_params']['type'] = tree_db['pine']
 params['tree_params']['fuel_perc'] = 100
 params['tree_params']['ember'] = False
- 
+params['tree_params']['burning'] = False
 
 f = Forest(params)
 
-f.plot()
+# f.plot()
  
  
