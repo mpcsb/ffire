@@ -9,16 +9,19 @@ import numpy as np
 # import matplotlib.pyplot as plt 
 
 class Tree():
-    def __init__(self, params, coord):
-        h = params['type']['height']
+    def __init__(self, tree_params, coord):
+        h = tree_params['type']['height']
         self.height = np.random.normal(h, h * 0.2)
-        self.type = params['type'] # dict containing properties of tree:
+        self.type = tree_params['type'] # dict containing properties of tree:
                                    # species name, radius, burn ability, ...
-        self.fuel_perc = params['fuel_perc'] # how burnt the tree is
-        self.ember = params['ember']
-        self.burning = params['burning']
+        self.fuel_perc = tree_params['fuel_perc'] # how burnt the tree is
+        self.ember = tree_params['ember']
+        self.burning = tree_params['burning']
+        self.safe_radius = tree_params['safe_radius'] # https://www.tandfonline.com/doi/full/10.1080/21580103.2016.1144541
         self.coord = coord
 
-    # def _sample_height(h=11):
-    #     # http://blogs.oregonstate.edu/geog566spatialstatistics/2019/04/19/point-pattern-analysis-of-tree-distribution-by-height-in-the-hj-andrews-forest/
-    #     return np.random.normal(h, h * 0.2)
+    def __eq__(self, other_tree):
+        return self.coord == other_tree.coord
+    
+    def __hash__(self):
+        return hash(self.coord)

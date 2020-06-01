@@ -24,7 +24,7 @@ params['forest_params']['forest_mixture'] = 0.5
 params['forest_params']['forest_density'] = 0.3
 
 params['terrain_params'] = dict()
-params['terrain_params']['shape'] = [(r, c) for r in range(50) for c in range(1000)]
+params['terrain_params']['shape'] = [(r, c) for r in range(55) for c in range(12)]
 params['terrain_params']['type'] = '2d'
 params['terrain_params']['soil'] = 'weed'
 
@@ -33,9 +33,10 @@ params['tree_params']['type'] = tree_db['pine']
 params['tree_params']['fuel_perc'] = 100
 params['tree_params']['ember'] = False
 params['tree_params']['burning'] = False
+params['tree_params']['safe_radius'] = 6.0
 
-f = Forest(params)
-
-# f.plot()
- 
+f = Forest(params) 
+#%%
+nn = f.neighbours 
+  
  

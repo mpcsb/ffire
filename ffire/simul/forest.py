@@ -4,22 +4,26 @@ Created on Fri May 29 15:37:58 2020
 
 @author: z003njns
 """
- 
+from math import sqrt
 import matplotlib.pyplot as plt
 
 from simul.terrain import Terrain
 from simul.tree import Tree
 
 
+def dist(p,q):
+    return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
+
+
 class Forest:
     
-    def __init__(self, params): 
-        
+    def __init__(self, params):  
         self.forest_density = params['forest_params']['forest_density']
         self.forest_mixture = params['forest_params']['forest_mixture']
         self.terrain = Terrain(params['terrain_params'])
         
         self.forest = self._forest_gen(params['tree_params'])
+        self.neighbours = self._nearest_trees()
         
 
     def _forest_gen(self, tree_params):
@@ -27,12 +31,28 @@ class Forest:
         self.tree_lst = list()
         for coord in self.terrain.shape:
             self.tree_lst.append(Tree(tree_params, coord))
-
+       
+        
+    def _nearest_trees(self): 
+        neighbours = dict()
+        for p in self.tree_lst: 
+            for q in self.tree_lst:  
+                d = dist(p.coord, q.coord)
+                if 0.0 < d < p.safe_radius:  
+                    if p in neighbours.keys():
+                        neighbours[p].append((d, q)) 
+                    else:
+                        neighbours[p] = [(d, q)]   
+        return neighbours
+ 
 
     def plot(self):
         height_distribution = [t.height for t in self.tree_lst]
         plt.hist(height_distribution, bins='auto')
+        
  
 
-#%%
+
+
  
+        
