@@ -6,6 +6,7 @@ Created on Fri May 29 15:37:58 2020
 """
 from math import sqrt
 import matplotlib.pyplot as plt
+import copy
 
 from simul.terrain import Terrain
 from simul.tree import Tree
@@ -22,9 +23,13 @@ class Forest:
         self.forest_mixture = params['forest_params']['forest_mixture']
         self.terrain = Terrain(params['terrain_params'])
         
-        self.forest = self._forest_gen(params['tree_params'])
-        self.neighbours = self._nearest_trees()
-        
+        self._forest_gen(params['tree_params'])
+        self._nearest_trees()
+        self._coord2tree()
+
+        self.safe_trees = copy.deepcopy(self.tree_lst)
+        self.burning_trees = list()
+        self.burnt_trees = list()       
 
     def _forest_gen(self, tree_params):
         ''' generate collection of trees over the terrain '''
@@ -34,18 +39,24 @@ class Forest:
        
         
     def _nearest_trees(self): 
-        neighbours = dict()
+        ''' generates a dictionary with the nearest trees up to a distance '''
+        self.neighbours = dict()
         for p in self.tree_lst: 
             for q in self.tree_lst:  
                 d = dist(p.coord, q.coord)
                 if 0.0 < d < p.safe_radius:  
-                    if p in neighbours.keys():
-                        neighbours[p].append((d, q)) 
+                    if p in self.neighbours.keys():
+                        self.neighbours[p].append((d, q)) 
                     else:
-                        neighbours[p] = [(d, q)]   
-        return neighbours
+                        self.neighbours[p] = [(d, q)]   
+        # return neighbours
  
-
+    def _coord2tree(self):
+        ''' mapping from coordinate to tree '''
+        self.coord_dict = dict()
+        for t in self.tree_lst:
+            self.coord_dict[t.coord] = t
+    
     def plot(self):
         height_distribution = [t.height for t in self.tree_lst]
         plt.hist(height_distribution, bins='auto')

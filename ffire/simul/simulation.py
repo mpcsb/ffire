@@ -1,15 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri May 29 21:31:55 2020
-
-@author: Miguel
-"""
-#%%
  
 import os
 os.chdir(r'C:\Users\Miguel\Documents\repos\ffire\ffire')
 
 from simul.forest import Forest
+from simul.fire import Fire
 from resources import tree_db as tb 
 from resources import soil_db as sb
 
@@ -24,7 +18,7 @@ params['forest_params']['forest_mixture'] = 0.5
 params['forest_params']['forest_density'] = 0.3
 
 params['terrain_params'] = dict()
-params['terrain_params']['shape'] = [(r, c) for r in range(55) for c in range(12)]
+params['terrain_params']['shape'] = [(r, c) for r in range(50) for c in range(50)]
 params['terrain_params']['type'] = '2d'
 params['terrain_params']['soil'] = 'weed'
 
@@ -35,8 +29,22 @@ params['tree_params']['ember'] = False
 params['tree_params']['burning'] = False
 params['tree_params']['safe_radius'] = 6.0
 
+params['fire_params'] = dict()
+params['fire_params']['starting_tree_coords'] = (1,1)
+params['fire_params']['spread'] = 1
+
 f = Forest(params) 
-#%%
-nn = f.neighbours 
-  
+f.neighbours
  
+
+fire = Fire(params['fire_params'])
+  
+fire.start_fire(f)
+ 
+ 
+
+for _ in range(25):
+    
+    fire.spread_fire(f)
+
+#%%
