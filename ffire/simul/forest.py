@@ -87,14 +87,14 @@ class Forest:
                         self.neighbours[t1] = [(d, t2)]
 
 
-    @lru_cache()
+    # @lru_cache()
     def __adjacent_trees(self, x, y):
         comparable_trees = list()
+
         diffs = [(dx, dy) for dx in range(-2, 2) for dy in range(-2, 2)]
 
         for delta in diffs:
             dx, dy = delta
-            # print(x, y)
             try:
                 t_lst = self.quadrants[x + dx][y + dy]
                 comparable_trees.extend(t_lst)
@@ -110,17 +110,25 @@ class Forest:
         for t in self.tree_lst:
             self.coord_dict[t.coord] = t
 
+
     def tree_feature_distribution(self, feature):
         height_distribution = [t.feature for t in self.tree_lst]
         plt.hist(height_distribution, bins='auto')
 
+
     def plot(self):
         colors = {'unburnt' :'green', 'burning':'red', 'ember':'orange', 'charcoal':'black'}
+        def size_tree(h):
+            if h>12:
+                return 2
+            else:
+                return 1
 
         coords = [t.coord for t in self.tree_lst]
         color = [colors[t.state] for t in self.tree_lst]
+        size = [size_tree(t.height) for t in self.tree_lst]
         x, y = list(map(list, zip(*coords)))
-        plt.scatter(x, y, c=color, s=2)
+        plt.scatter(x, y, c=color, s=size, alpha=0.3)
 
 
 

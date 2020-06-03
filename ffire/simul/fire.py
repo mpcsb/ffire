@@ -43,7 +43,8 @@ class Fire():
             else:
                 adjacent_trees = [t for (d, t) in self.forest.neighbours[tree]]
                 for t in adjacent_trees:
-                    t.state = 'burning'
+                    if t.state not in ['ember', 'charcoal', 'burning']:
+                        t.state = 'burning'
                 new_burning_trees.extend(adjacent_trees)
 
         new_burning_trees = list(set(new_burning_trees))
@@ -60,8 +61,8 @@ class Fire():
         ''' determines tree transition from burning to ember'''
         remove_lst = list()
         for t in self.forest.burning_trees:
-            t.fuel_perc -= 5 # constant decrease in fuel [TODO] contextual
-            if t.fuel_perc <= 0:
+            t.fuel_perc -= 2 # constant decrease in fuel [TODO] contextual
+            if t.fuel_perc <= 10: # at this point it will turn to ember (?)
                 remove_lst.append(t)
                 t.state = 'ember'
                 self.forest.ember_trees[t] = 0
@@ -74,9 +75,9 @@ class Fire():
         burnt_list = list()
         for t in self.forest.ember_trees:
             self.forest.ember_trees[t] += 1
-            if self.forest.ember_trees[t] > 10: # [TODO] makes this probabillistic
+            t.fuel_perc -= 0.2
+            if self.forest.ember_trees[t] > 50: # [TODO] makes this probabillistic
                 t.state = 'charcoal'
-
                 burnt_list.append(t)
 
         for t in burnt_list:

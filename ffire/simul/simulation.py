@@ -31,7 +31,7 @@ params['tree_params']['ember'] = False
 params['tree_params']['burning'] = False
 
 params['fire_params'] = dict()
-params['fire_params']['starting_tree_coords'] = (5,5)
+params['fire_params']['starting_tree_coords'] = (51, 10)
 params['fire_params']['spread'] = 1
 
 
@@ -41,8 +41,7 @@ f = Forest(params)
 fire = Fire(params['fire_params'], f)
 fire.start_fire()
 
-for _ in range(500):
-# while len(f.safe_trees) > 0 and (len(f.burning_trees) > 0 or len(f.ember_trees) > 0):
+while  len(f.burning_trees) > 0 or (len(f.burning_trees)==0 and len(f.ember_trees) > 0):
     fire.update_fire(verbose=True)
     f.plot()
     plt.show()
