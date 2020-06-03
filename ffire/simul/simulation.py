@@ -13,13 +13,14 @@ soil_db = sb.soil_db
 
 
 params = dict()
-
 params['forest_params'] = dict()
 params['forest_params']['forest_mixture'] = 0.5
-params['forest_params']['forest_density'] = 0.9
+#Tree density in primary forests varies from 50,000-100,000 trees per square km
+params['forest_params']['forest_density'] = 0.9 # 0.9 - 0.95
+params['forest_params']['safe_radius'] = 6
 
 params['terrain_params'] = dict()
-params['terrain_params']['shape'] = [(r, c) for r in range(250) for c in range(250)]
+params['terrain_params']['shape'] = [(r, c) for r in range(500) for c in range(500)]
 params['terrain_params']['type'] = '2d'
 params['terrain_params']['soil'] = 'grass'
 
@@ -28,24 +29,21 @@ params['tree_params']['type'] = tree_db['pine']
 params['tree_params']['fuel_perc'] = 100
 params['tree_params']['ember'] = False
 params['tree_params']['burning'] = False
-params['tree_params']['safe_radius'] = 6
 
 params['fire_params'] = dict()
-params['fire_params']['starting_tree_coords'] = (21,20)
+params['fire_params']['starting_tree_coords'] = (5,5)
 params['fire_params']['spread'] = 1
 
 
-#%%
+
 f = Forest(params)
 
 fire = Fire(params['fire_params'], f)
-fire.start_fire( )
+fire.start_fire()
 
-# l = len(f.safe_trees)
-
-# while len(f.burning_trees) != l and len(f.burning_trees) > 0 and len(f.ember_trees) > 0:
-for _ in range(1000):
-    fire.update_fire(verbose=False)
+for _ in range(500):
+# while len(f.safe_trees) > 0 and (len(f.burning_trees) > 0 or len(f.ember_trees) > 0):
+    fire.update_fire(verbose=True)
     f.plot()
     plt.show()
 

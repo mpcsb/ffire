@@ -37,18 +37,23 @@ class Fire():
         '''
         new_burning_trees = list()
         for tree in self.forest.burning_trees:
-            adjacent_trees = [t for d, t in self.forest.neighbours[tree]]
-            for t in adjacent_trees:
-                t.state = 'burning'
-            new_burning_trees.extend(adjacent_trees)
+
+            if tree not in self.forest.neighbours.keys(): # not adjacent
+                next
+            else:
+                adjacent_trees = [t for (d, t) in self.forest.neighbours[tree]]
+                for t in adjacent_trees:
+                    t.state = 'burning'
+                new_burning_trees.extend(adjacent_trees)
 
         new_burning_trees = list(set(new_burning_trees))
+
         if len(new_burning_trees) > 0:
             self.forest.burning_trees = list(set(new_burning_trees).union(set(self.forest.burning_trees)))
             self.forest.safe_trees = [t for t in self.forest.safe_trees if t not in
                                  new_burning_trees]
         if verbose:
-            print(f'Safe trees: {len(self.forest.safe_trees)}, Burning trees:{len(self.forest.burning_trees)}')
+            print(f'Safe trees: {len(self.forest.safe_trees)}, Burning trees:{len(self.forest.burning_trees)}, Ember trees:{len(self.forest.ember_trees)}')
 
 
     def _adjust_fuel(self):

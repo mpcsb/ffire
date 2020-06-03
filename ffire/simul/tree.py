@@ -18,7 +18,7 @@ class Tree():
         # self.ember = tree_params['ember']
         # self.burning = tree_params['burning']
         self.state = 'unburnt' # burning, ember, charcoal
-        self.safe_radius = tree_params['safe_radius'] # https://www.tandfonline.com/doi/full/10.1080/21580103.2016.1144541
+        # self.safe_radius = tree_params['safe_radius'] # https://www.tandfonline.com/doi/full/10.1080/21580103.2016.1144541
         self.coord = coord
 
     def __eq__(self, other_tree):
