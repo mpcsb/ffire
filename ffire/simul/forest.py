@@ -33,11 +33,12 @@ class Forest:
         self.ember_trees = dict()
         self.burnt_trees = list()
 
+
     def _forest_gen(self, tree_params):
         ''' generate collection of trees over the terrain '''
         self.tree_lst = list()
         for coord in self.terrain.shape:
-            if random.random() > 0.9:
+            if random.random() > self.forest_density:
                 self.tree_lst.append(Tree(tree_params, coord))
 
 

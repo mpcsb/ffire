@@ -65,6 +65,7 @@ class Fire():
 
 
     def _consumed_trees(self):
+        ''' determines tree transition from ember to charcoal'''
         burnt_list = list()
         for t in self.forest.ember_trees:
             self.forest.ember_trees[t] += 1
