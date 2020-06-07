@@ -30,11 +30,17 @@ class Forest:
         self._quadrant_gen()
         self._nearest_trees()
         self._coord2tree()
-
-        self.safe_trees = copy.deepcopy(self.tree_lst)
-        self.burning_trees = list()
-        self.ember_trees = dict()
-        self.burnt_trees = list()
+        
+        self.tree_state = {'unburnt': set(self.tree_lst),
+                           'burning':set(),
+                           'burning_recent':set(),
+                           'ember':set(),
+                           'ash':set()
+                           }
+        # self.safe_trees = copy.deepcopy(self.tree_lst)
+        # self.burning_trees = list()
+        # self.ember_trees = dict()
+        # self.burnt_trees = list()
 
 
     def _forest_gen(self, tree_params):
@@ -43,6 +49,7 @@ class Forest:
         for coord in self.terrain.shape:
             if random.random() > self.forest_density:
                 self.tree_lst.append(Tree(tree_params, coord))
+        print(f'{len(self.tree_lst)} in forest')
 
 
     def _quadrant_gen(self):
@@ -117,7 +124,10 @@ class Forest:
 
 
     def plot(self):
-        colors = {'unburnt' :'green', 'burning':'red', 'ember':'orange', 'charcoal':'black'}
+        colors = {'unburnt':'green', 
+                  'burning':'red', 
+                  'ember':'orange', 
+                  'ash':'black'}
         def size_tree(h):
             if h>12:
                 return 2

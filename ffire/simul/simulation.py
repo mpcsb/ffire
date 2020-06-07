@@ -2,6 +2,7 @@
 # import os
 
 import matplotlib.pyplot as plt
+from collections import Counter
 
 from simul.forest import Forest
 from simul.fire import Fire
@@ -16,11 +17,11 @@ params = dict()
 params['forest_params'] = dict()
 params['forest_params']['forest_mixture'] = 0.5
 #Tree density in primary forests varies from 50,000-100,000 trees per square km
-params['forest_params']['forest_density'] = 0.9 # 0.9 - 0.95
-params['forest_params']['safe_radius'] = 6
+params['forest_params']['forest_density'] = 0.8 # 0.9 - 0.95
+params['forest_params']['safe_radius'] = 16
 
 params['terrain_params'] = dict()
-params['terrain_params']['shape'] = [(r, c) for r in range(500) for c in range(500)]
+params['terrain_params']['shape'] = [(r, c) for r in range(100) for c in range(100)]
 params['terrain_params']['type'] = '2d'
 params['terrain_params']['soil'] = 'grass'
 
@@ -35,16 +36,17 @@ params['fire_params']['starting_tree_coords'] = (51, 10)
 params['fire_params']['spread'] = 1
 
 
-
-f = Forest(params)
-
-fire = Fire(params['fire_params'], f)
+ 
+fire = Fire(params)
 fire.start_fire()
 
-while  len(f.burning_trees) > 0 or (len(f.burning_trees)==0 and len(f.ember_trees) > 0):
+while  len(fire.forest.tree_state['burning']) > 0 or (len(fire.forest.tree_state['burning'])==0 
+                                                      and len(fire.forest.tree_state['ember']) > 0):
     fire.update_fire(verbose=True)
-    f.plot()
+    
+    state = [t.state for t in fire.forest.tree_lst]
+    print(Counter(state))
+    fire.forest.plot()
     plt.show()
 
-
-#%%
+ 
