@@ -7,7 +7,7 @@ Created on Fri May 29 15:37:58 2020
 from math import sqrt
 import matplotlib.pyplot as plt
 import random
-import copy
+# import copy
 from functools import lru_cache
 
 from simul.terrain import Terrain
@@ -15,7 +15,27 @@ from simul.tree import Tree
 
 
 def dist(p,q):
-    return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
+    '''
+    p = (1, 2, 3)
+    q = (3, 4, 5)
+
+    >>> dist(p,q)
+    2.8284271247461903
+    >>> dist(q,p)
+    3.4641016151377544
+    '''
+    if len(p) == 2:
+        return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
+    if len(p) == 3:
+        _, _, p3 = p
+        _, _, q3 = q
+
+        if p3 - q3 < 0:
+            p_2d = (p[0], p[1])
+            q_2d = (q[0], q[1])
+            return dist(p_2d, q_2d)
+        if p3 - q3 > 0: # burning tree is above other trees
+            return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
 
 
 class Forest:
@@ -30,17 +50,13 @@ class Forest:
         self._quadrant_gen()
         self._nearest_trees()
         self._coord2tree()
-        
+
         self.tree_state = {'unburnt': set(self.tree_lst),
                            'burning':set(),
                            'burning_recent':set(),
                            'ember':set(),
                            'ash':set()
                            }
-        # self.safe_trees = copy.deepcopy(self.tree_lst)
-        # self.burning_trees = list()
-        # self.ember_trees = dict()
-        # self.burnt_trees = list()
 
 
     def _forest_gen(self, tree_params):
@@ -64,17 +80,6 @@ class Forest:
             self.quadrants[x // d][y // d].append(t)
 
 
-    # def _nearest_trees(self):
-    #     ''' generates a dictionary with the nearest trees up to a distance '''
-    #     self.neighbours = dict()
-    #     for p in self.tree_lst:
-    #         for q in self.tree_lst:
-    #             d = dist(p.coord, q.coord)
-    #             if 0.0 < d < p.safe_radius:
-    #                 if p in self.neighbours.keys():
-    #                     self.neighbours[p].append((d, q))
-    #                 else:
-    #                     self.neighbours[p] = [(d, q)]
     def _nearest_trees(self):
         ''' generates a dictionary with the nearest trees up to a distance '''
         self.neighbours = dict()
@@ -94,7 +99,7 @@ class Forest:
                         self.neighbours[t1] = [(d, t2)]
 
 
-    # @lru_cache()
+    @lru_cache()
     def __adjacent_trees(self, x, y):
         comparable_trees = list()
 
@@ -124,9 +129,9 @@ class Forest:
 
 
     def plot(self):
-        colors = {'unburnt':'green', 
-                  'burning':'red', 
-                  'ember':'orange', 
+        colors = {'unburnt':'green',
+                  'burning':'red',
+                  'ember':'orange',
                   'ash':'black'}
         def size_tree(h):
             if h>12:

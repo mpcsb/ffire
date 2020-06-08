@@ -14,9 +14,8 @@ class Tree():
         self.height = np.random.normal(h, h * 0.2)
         self.type = tree_params['type'] # dict containing properties of tree:
                                    # species name, radius, burn ability, ...
-        self.fuel_perc = tree_params['fuel_perc'] # how burnt the tree is
-        # self.ember = tree_params['ember']
-        # self.burning = tree_params['burning']
+        self.fuel_perc = self.height * np.random.normal(10, 1) # how burnt the tree is
+
         self.state = 'unburnt' # burning, ember, charcoal
         # self.safe_radius = tree_params['safe_radius'] # https://www.tandfonline.com/doi/full/10.1080/21580103.2016.1144541
         self.coord = coord
