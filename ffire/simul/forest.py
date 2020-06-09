@@ -24,7 +24,8 @@ def dist(p,q):
     >>> dist(q,p)
     3.4641016151377544
     '''
-    if len(p) == 2:
+    # if len(p) == 2:
+    if True:
         return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
     if len(p) == 3:
         _, _, p3 = p
@@ -61,22 +62,31 @@ class Forest:
 
     def _forest_gen(self, tree_params):
         ''' generate collection of trees over the terrain '''
+        
+        coords = [(r, c) for r in range(self.terrain.width) for c in range(self.terrain.length)]
+        
         self.tree_lst = list()
-        for coord in self.terrain.shape:
+        # for coord in self.terrain.points:
+        for coord_2d in coords:
             if random.random() > self.forest_density:
-                self.tree_lst.append(Tree(tree_params, coord))
+                x, y = coord_2d
+                altitude = self.terrain.interpolated_f(x, y)
+                coord_3d = (x, y, int(altitude[0]))
+                self.tree_lst.append(Tree(tree_params, coord_3d))
         print(f'{len(self.tree_lst)} in forest')
 
 
     def _quadrant_gen(self):
-        width, length = max(self.terrain.shape)
-
+        ''' Understanding which points belong to which quadrant reduces computation
+        
+        '''
+ 
         d = self.safe_radius
-        self.quadrants = {x: {y: list() for y in range((length + 1) // d + 1)}
-                          for x in range((width + 1) // d + 1)}
+        self.quadrants = {x: {y: list() for y in range(int((self.terrain.length + 1) // d + 1))}
+                          for x in range(int((self.terrain.width + 1) // d + 1))}
 
         for t in self.tree_lst:
-            x, y = t.coord
+            x, y, _ = t.coord
             self.quadrants[x // d][y // d].append(t)
 
 
@@ -84,7 +94,7 @@ class Forest:
         ''' generates a dictionary with the nearest trees up to a distance '''
         self.neighbours = dict()
         for t1 in self.tree_lst:
-            x, y = t1.coord
+            x, y, _ = t1.coord
             x = x // self.safe_radius
             y = y // self.safe_radius
 
@@ -92,6 +102,10 @@ class Forest:
             # print(len(comparable_trees))
             for t2 in comparable_trees:
                 d = dist(t1.coord, t2.coord)
+                
+                if d == None: 
+                    d = 2 * self.safe_radius # TODO: d is outputing null 
+                
                 if 0.0 < d < self.safe_radius:
                     if t1 in self.neighbours.keys():
                         self.neighbours[t1].append((d, t2))
@@ -147,5 +161,5 @@ class Forest:
 
 
 
-
-
+#%%
+ 

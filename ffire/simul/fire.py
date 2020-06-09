@@ -13,7 +13,8 @@ def dist(p,q):
     >>> dist(q,p)
     3.4641016151377544
     '''
-    if len(p) == 2:
+    # if len(p) == 2:
+    if True:
         return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
     if len(p) == 3:
         _, _, p3 = p

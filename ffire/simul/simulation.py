@@ -1,6 +1,6 @@
 
 import os
-os.chdir(r'D:\UserData\Z003NJNS\Documents\rec\ffire\ffire\ffire')
+os.chdir(r'C:\Users\Miguel\Documents\repos\ffire\ffire')
 
 import matplotlib.pyplot as plt
 from collections import Counter
@@ -19,10 +19,15 @@ params['forest_params'] = dict()
 params['forest_params']['forest_mixture'] = 0.5
 #Tree density in primary forests varies from 50,000-100,000 trees per square km
 params['forest_params']['forest_density'] = 0.95 # 0.9 - 0.95
-params['forest_params']['safe_radius'] = 6
+params['forest_params']['safe_radius'] = 6.0
 
 params['terrain_params'] = dict()
-params['terrain_params']['shape'] = [(r, c) for r in range(1200) for c in range(1000)]
+# params['terrain_params']['shape'] = [(r, c) for r in range(1200) for c in range(1000)]
+p2 = 38.685093, -9.309931
+p1 = 38.693609, -9.301329
+params['terrain_params']['shape'] = (p1, p2)
+params['terrain_params']['num_points'] = 3
+
 params['terrain_params']['soil'] = 'grass'
 
 params['tree_params'] = dict()
@@ -46,8 +51,8 @@ while  len(fire.forest.tree_state['burning']) > 0 or (len(fire.forest.tree_state
     state = [t.state for t in fire.forest.tree_lst]
     print(Counter(state))
 
-    if it % 10 == 0:
-        fire.forest.plot()
-        plt.show()
+    # if it % 10 == 0:
+    #     fire.forest.plot()
+    #     plt.show()
 
     it += 1
