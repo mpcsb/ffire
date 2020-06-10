@@ -24,14 +24,14 @@ def dist(p,q):
     >>> dist(q,p)
     3.4641016151377544
     '''
-    # if len(p) == 2:
-    if True:
+    if len(p) == 2:
+    # if True:
         return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
     if len(p) == 3:
         _, _, p3 = p
         _, _, q3 = q
 
-        if p3 - q3 < 0:
+        if p3 - q3 <= 0:
             p_2d = (p[0], p[1])
             q_2d = (q[0], q[1])
             return dist(p_2d, q_2d)
@@ -156,8 +156,11 @@ class Forest:
         coords = [t.coord for t in self.tree_lst]
         color = [colors[t.state] for t in self.tree_lst]
         size = [size_tree(t.height) for t in self.tree_lst]
-        x, y = list(map(list, zip(*coords)))
-        plt.scatter(x, y, c=color, s=size, alpha=0.3)
+        x, y, z = list(map(list, zip(*coords)))
+        
+        fig, axs = plt.subplots(1, 2, gridspec_kw={'width_ratios': [1, 1]})
+        axs[0].scatter(x, y, c=color, s=size, alpha=0.3)
+        axs[1].scatter(x, y, c=z, s=size, alpha=0.3)
 
 
 

@@ -3,7 +3,7 @@ from math import sqrt
 from simul.forest import Forest
 
 
-def dist(p,q):
+def dist(p, q):
     '''
     p = (1, 2, 3)
     q = (3, 4, 5)
@@ -13,14 +13,16 @@ def dist(p,q):
     >>> dist(q,p)
     3.4641016151377544
     '''
-    # if len(p) == 2:
-    if True:
+    if len(p) == 2:
+    # if True:
         return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
+    
     if len(p) == 3:
+         
         _, _, p3 = p
         _, _, q3 = q
-
-        if p3 - q3 < 0:
+         
+        if p3 - q3 <= 0:
             p_2d = (p[0], p[1])
             q_2d = (q[0], q[1])
             return dist(p_2d, q_2d)
@@ -32,6 +34,7 @@ class Fire():
     def __init__(self, params):
 
         self.forest = Forest(params)
+        
         # distance of all trees to starting tree.
         # if the coordinates for the starting tree are not found in the forrest
         # then the closest is chosen.

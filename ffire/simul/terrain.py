@@ -85,7 +85,7 @@ class Terrain():
  
     
     def plot3d(self):
-        xyz = self.points
+        xyz = self.lat_lon_alt
         x = [p[0] for p in xyz]
         y = [p[1] for p in xyz]
         z = [p[2] for p in xyz]
@@ -94,33 +94,14 @@ class Terrain():
         y = np.array(y).reshape(self.num_points, self.num_points)
         z = np.array(z).reshape(self.num_points, self.num_points)
          
-        for angle in range(0, 360, 20):
-            ax = Axes3D(plt.figure())
-            ax.plot_surface(x, y, z, cmap=plt.cm.viridis, cstride=1, rstride=1)
-        
-            ax.view_init(30, angle) 
-            plt.show()
-            time.sleep(0.1)
+        # for angle in range(0, 360, 20):
+        angle = 60
+        ax = Axes3D(plt.figure())
+        ax.plot_surface(x, y, z, cmap=plt.cm.viridis, cstride=1, rstride=1)
+    
+        ax.view_init(30, angle) 
+        plt.show()
+        # time.sleep(0.1)
     
 #%%
-# terrain = dict()
-# p2 = 38.685093, -9.309931
-# p1 = 38.693609, -9.301329
-# terrain['shape'] = (p1, p2)
-# terrain['num_points'] =3
-# t = Terrain(terrain)
-
-# t._cartesian_coords()
-# t.width
-# t.length
-# # self.interpolated_f = interpolate.interp2d(x, y, z, kind='cubic')
-
-# # f(38.740106, -9.468151)
-
-# # np_lat = np.linspace(38.740106, 38.730494, num=100, endpoint=True)
-# # np_long = np.linspace(-9.468652, -9.465151, num=100, endpoint=True)
-# # height =  f(np_lat,np_long)
-# # x, y = np.meshgrid(np_lat, np_long)
-# # # x = np.array(np_lat).reshape(100,100)
-# # # y = np.array(np_long).reshape(100,100)
-# # z =height 
+ 
