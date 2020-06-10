@@ -14,11 +14,9 @@ def dist(p, q):
     3.4641016151377544
     '''
     if len(p) == 2:
-    # if True:
         return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
     
     if len(p) == 3:
-         
         _, _, p3 = p
         _, _, q3 = q
          
@@ -65,9 +63,13 @@ class Fire():
 
         recent_burns = list()
         for tree in self.forest.tree_state['burning']:
-
-            adjacent_trees = set([t for (d, t) in self.forest.neighbours[tree]])
-
+            # if tree not in self.forest.neighbours.keys():
+            #     continue
+            try:
+                adjacent_trees = set([t for (d, t) in self.forest.neighbours[tree]])
+            except KeyError:
+                continue
+            
             for t in adjacent_trees:
                 if t.state == 'unburnt':
                     t.state = 'burning'

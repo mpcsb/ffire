@@ -21,6 +21,7 @@ class Terrain():
         self.num_points = terrain_params['num_points'] 
 
         self.lat_lon_alt = self._sample_altitude(self.shape[0], self.shape[1], self.num_points)
+        self._plot3d()
         
         x1, y1, _, _ = utm.from_latlon(self.shape[0][0], self.shape[0][1])  
         x2, y2, _, _ = utm.from_latlon(self.shape[1][0], self.shape[1][1])
@@ -48,14 +49,13 @@ class Terrain():
                 time.sleep(1)
                 r = requests.get(url(p[0],p[1]))
         
-            point = (p[0], p[1], r.text)
+            point = (p[0], p[1], float(r.text))
             lat_lon_alt.append(point) 
         
             if iter %3 == 0:
                 time.sleep(0.5)
                 if verbose: print(iter)
-            iter += 1
-            
+            iter += 1 
         return lat_lon_alt
 
 
@@ -84,7 +84,7 @@ class Terrain():
         return xyz
  
     
-    def plot3d(self):
+    def _plot3d(self):
         xyz = self.lat_lon_alt
         x = [p[0] for p in xyz]
         y = [p[1] for p in xyz]
@@ -94,13 +94,13 @@ class Terrain():
         y = np.array(y).reshape(self.num_points, self.num_points)
         z = np.array(z).reshape(self.num_points, self.num_points)
          
-        # for angle in range(0, 360, 20):
-        angle = 60
-        ax = Axes3D(plt.figure())
-        ax.plot_surface(x, y, z, cmap=plt.cm.viridis, cstride=1, rstride=1)
-    
-        ax.view_init(30, angle) 
-        plt.show()
+        for angle in range(0, 360, 20):
+        # angle = 60
+            ax = Axes3D(plt.figure())
+            ax.plot_surface(x, y, z, cmap=plt.cm.viridis, cstride=1, rstride=1)
+        
+            ax.view_init(30, angle) 
+            plt.show()
         # time.sleep(0.1)
     
 #%%

@@ -20,15 +20,15 @@ params = dict()
 params['forest_params'] = dict()
 params['forest_params']['forest_mixture'] = 0.5
 #Tree density in primary forests varies from 50,000-100,000 trees per square km
-params['forest_params']['forest_density'] = 0.93 # 0.9 - 0.95
+params['forest_params']['forest_density'] = 0.95 # 0.9 - 0.95
 params['forest_params']['safe_radius'] = 6.0
 
 params['terrain_params'] = dict()
 # params['terrain_params']['shape'] = [(r, c) for r in range(1200) for c in range(1000)]
-p2 = 38.685093, -9.309931
-p1 = 38.693609, -9.301329
+p2 = 38.721665, -9.434295
+p1 = 38.727851, -9.425669
 params['terrain_params']['shape'] = (p1, p2)
-params['terrain_params']['num_points'] = 10
+params['terrain_params']['num_points'] = 6
 
 params['terrain_params']['soil'] = 'grass'
 
@@ -38,7 +38,7 @@ params['tree_params']['ember'] = False
 params['tree_params']['burning'] = False
 
 params['fire_params'] = dict()
-params['fire_params']['starting_tree_coords'] = (51, 50, 0)
+params['fire_params']['starting_tree_coords'] = (200, 650, 0)
 params['fire_params']['spread'] = 1
 
 

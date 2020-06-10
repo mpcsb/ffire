@@ -7,17 +7,26 @@ Created on Fri May 29 15:37:58 2020
 
 
 class Weather():
-    def __init__(self, params):
-        self.rain = params['rain']
-        self.relative_humidity = params['relative_humidity']
-        self.wind_intensity = params['wind_intensity']
-        self.wind_direction = params['wind_direction']
-        self.timestamp = params['timestamp']
-
-    def log(self):
-        pass
-
+    def __init__(self, timestamp):
+        self.weather = Weather()
+        self.humidity = Humidity()
+        self.timestamp = self.timestamp = timestamp
+ 
 
 class Wind():
     def __init__(self):
         pass
+    
+    def update_wind(self, intensity, direction, timestamp):
+        self.wind_intensity = intensity
+        self.wind_direction = direction
+        self.timestamp = timestamp
+
+
+class Humidity():
+    def __init__(self):
+        pass
+    
+    def update_humidity(self, rel_hum, timestamp):
+        self.relative_humidity = rel_hum
+        self.timestamp = timestamp
