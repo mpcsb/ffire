@@ -47,22 +47,24 @@ class Forest:
         
         p1, p2 = self.shape
         
-        coords_x_y = [(r, c) for r in range(self.terrain.width) for c in range(self.terrain.length)]
+        coords_x_y = [(x, y) for x in range(self.terrain.width) 
+                             for y in range(self.terrain.length)]
         
-        np_lat = np.linspace(p1[0], p2[0], num=self.terrain.length, endpoint=True)
-        np_long = np.linspace(p1[1], p2[1], num=self.terrain.width, endpoint=True)
+        np_lat = np.linspace(p1[0], p2[0], num=self.terrain.width, endpoint=True)
+        np_long = np.linspace(p1[1], p2[1], num=self.terrain.length, endpoint=True)
         coords_lat_lon = [(lat, long) for lat in list(np_lat) for long in list(np_long)]
         
+
         self.tree_lst = list()
         for lat_lon, x_y in zip(coords_lat_lon, coords_x_y): #TODO assert this is valid and generalizes
             if random.random() > self.forest_density:
                 lat, lon = lat_lon
                 x, y = x_y
                 altitude = self.terrain.interpolated_lat_lon_alt(lat, lon)
-                # altitude = self.terrain.interpolated_cartesian(x, y)
+                altitude_cart = self.terrain.interpolated_cartesian(x, y)
                 
                 lat_lon_alt = (lat, lon, int(altitude[0]))
-                x_y_alt = (x, y, int(altitude[0]))
+                x_y_alt = (x, y, int(altitude_cart[0]))
                 self.tree_lst.append(Tree(tree_params, lat_lon_alt, x_y_alt))
 
         print(f'{len(self.tree_lst)} trees in selected area')

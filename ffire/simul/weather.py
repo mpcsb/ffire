@@ -47,7 +47,7 @@ def coords_to_north(p1, p2):
     bearing = math.atan2(y, x) * 180 / math.pi;
     if bearing < 0:
         bearing = bearing + 360;
-         
+
     return bearing
 
 

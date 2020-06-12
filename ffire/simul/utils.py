@@ -4,7 +4,7 @@ Created on Wed Jun 10 23:14:50 2020
 
 @author: Miguel
 """
-
+import math
 from math import sqrt
 
 def dist(p, q):
@@ -30,3 +30,20 @@ def dist(p, q):
             return dist(p_2d, q_2d)
         if p3 - q3 > 0: # burning tree is above other trees
             return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
+        
+
+def coords_to_north(p1, p2):
+    lat1, lon1 = p1
+    lat2, lon2 = p2
+    
+    lat1 = lat1 * math.pi / 180;
+    lat2 = lat2 * math.pi / 180;
+    dLon = (lon2-lon1) * math.pi / 180;
+    y = math.sin(dLon) * math.cos(lat2);
+    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2)  *math.cos(dLon);
+
+    bearing = math.atan2(y, x) * 180 / math.pi;
+    if bearing < 0:
+        bearing = bearing + 360;
+         
+    return bearing
