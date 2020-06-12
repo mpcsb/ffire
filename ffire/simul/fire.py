@@ -1,31 +1,8 @@
 
-from math import sqrt
+# from math import sqrt
 from simul.forest import Forest
+from simul.utils import dist
 
-
-def dist(p, q):
-    '''
-    p = (1, 2, 3)
-    q = (3, 4, 5)
-
-    >>> dist(p,q)
-    2.8284271247461903
-    >>> dist(q,p)
-    3.4641016151377544
-    '''
-    if len(p) == 2:
-        return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
-    
-    if len(p) == 3:
-        _, _, p3 = p
-        _, _, q3 = q
-         
-        if p3 - q3 <= 0:
-            p_2d = (p[0], p[1])
-            q_2d = (q[0], q[1])
-            return dist(p_2d, q_2d)
-        if p3 - q3 > 0: # burning tree is above other trees
-            return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
 
 
 class Fire():
@@ -50,7 +27,7 @@ class Fire():
         self.forest.tree_state['burning'].add(starting_tree)
         self.forest.tree_state['unburnt'].remove(starting_tree)
 
-        print(starting_tree.coord)
+        print(starting_tree.x_y)
 
         # self.forest.tree_state['recent_burn'].add(starting_tree)
 
@@ -63,8 +40,6 @@ class Fire():
 
         recent_burns = list()
         for tree in self.forest.tree_state['burning']:
-            # if tree not in self.forest.neighbours.keys():
-            #     continue
             try:
                 adjacent_trees = set([t for (d, t) in self.forest.neighbours[tree]])
             except KeyError:
