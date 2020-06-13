@@ -2,8 +2,8 @@
 # from math import sqrt
 from simul.forest import Forest
 from simul.utils import dist, bearing
-from simul.weather import Wind, Humidity
-from math import cos
+# from simul.weather import Wind, Humidity
+# from math import cos
 
 class Fire():
     def __init__(self, params):
