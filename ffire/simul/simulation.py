@@ -25,10 +25,11 @@ params['forest_params']['safe_radius'] = 6.0
 
 params['terrain_params'] = dict()
 # params['terrain_params']['shape'] = [(r, c) for r in range(1200) for c in range(1000)]
-p1 = 38.706934, -9.316414
-p2 = 38.713648, -9.307820
+# p1 = 38.706934, -9.316414
+p1 = 38.709934, -9.333414
+p2 = 38.753648, -9.307820
 params['terrain_params']['shape'] = (p1, p2)
-params['terrain_params']['num_points'] = 10
+params['terrain_params']['num_points'] = 20
 
 params['terrain_params']['soil'] = 'grass'
 
@@ -38,7 +39,7 @@ params['tree_params']['ember'] = False
 params['tree_params']['burning'] = False
 
 params['fire_params'] = dict()
-params['fire_params']['starting_tree_coords'] = (200, 250, 0)
+params['fire_params']['starting_tree_coords'] = (200, 640, 0)
  
 
 params['weather_params'] = dict()
@@ -47,8 +48,9 @@ params['weather_params']['speed'] = 10
 
 fire = Fire(params)
 fire.start_fire()
-fire.forest.terrain.plot3d(90)
+fire.forest.terrain.plot3d(60)
 print(f'Width:{fire.forest.terrain.width} Length:{fire.forest.terrain.length}')
+
 #%%
 # fire.forest.reset_forest()
 # fire.start_fire()
@@ -61,7 +63,7 @@ while len(fire.forest.tree_state['burning']) > 0 or\
     state = [t.state for t in fire.forest.tree_lst]
     print(Counter(state))
 
-    if it % 5 == 0:
+    if it % 10 == 0:
         fire.forest.plot()
         plt.show()
 

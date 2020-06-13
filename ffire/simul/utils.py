@@ -24,7 +24,7 @@ def dist(p, q):
         _, _, p3 = p
         _, _, q3 = q
          
-        if p3 - q3 <= 0:
+        if p3 - q3 <= 0: # burning tree is below other trees
             p_2d = (p[0], p[1])
             q_2d = (q[0], q[1])
             return dist(p_2d, q_2d)
@@ -32,7 +32,7 @@ def dist(p, q):
             return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
         
 
-def coords_to_north(p1, p2):
+def bearing(p1, p2):
     lat1, lon1 = p1
     lat2, lon2 = p2
     

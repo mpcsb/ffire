@@ -11,7 +11,7 @@ import random
 from functools import lru_cache
 
 from simul.terrain import Terrain
-from simul.weather import Wind, Humidity
+
 from simul.tree import Tree
 from simul.utils import dist
  
@@ -21,8 +21,7 @@ class Forest:
     def __init__(self, params):
         self.terrain = Terrain(params['terrain_params'])
         self.shape = params['terrain_params']['shape']
-        self.wind = Wind(params['weather_params'])
-        # self.humidity = Humidity(params['weather_params'])
+
         
         self.forest_density = params['forest_params']['forest_density']
         self.forest_mixture = params['forest_params']['forest_mixture']
@@ -39,7 +38,7 @@ class Forest:
                            'ember':set(),
                            'ash':set()
                            }
-
+        self.sampled_trees = random.sample(self.tree_lst, 10000)
 
 
     def _forest_gen(self, tree_params):
@@ -141,14 +140,9 @@ class Forest:
                   'burning':'red',
                   'ember':'orange',
                   'ash':'black'}
-        # def size_tree(h):
-        #     if h>12:
-        #         return 2
-        #     else:
-        #         return 1
-
-        coords = [t.lat_lon for t in self.tree_lst]
-        color = [colors[t.state] for t in self.tree_lst]
+ 
+        coords = [t.lat_lon for t in self.sampled_trees]
+        color = [colors[t.state] for t in self.sampled_trees]
         # size = [size_tree(t.height) for t in self.tree_lst]
         x, y, z = list(map(list, zip(*coords)))
         
