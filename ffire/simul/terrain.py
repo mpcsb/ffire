@@ -69,8 +69,7 @@ class Terrain():
     def _gen_coordinates(self):
         '''
         required for dimensioning the simulation
-        '''
-        
+        ''' 
         
         coordinates = list() # (lat, long, z, x, y)
         for point in self.lat_lon_alt:
@@ -107,7 +106,7 @@ class Terrain():
          
         for angle in range(0, 360, angle):
         # angle = 60
-            ax = Axes3D(plt.figure())
+            ax = Axes3D(plt.figure(figsize=(10,10)))
             ax.plot_surface(x, y, z, cmap=plt.cm.viridis, cstride=1, rstride=1) 
             ax.view_init(30, angle) 
             plt.show() 

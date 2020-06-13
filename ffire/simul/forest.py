@@ -7,7 +7,7 @@ Created on Fri May 29 15:37:58 2020
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-# import copy
+import utm
 from functools import lru_cache
 
 from simul.terrain import Terrain
@@ -22,6 +22,8 @@ class Forest:
         self.terrain = Terrain(params['terrain_params'])
         self.shape = params['terrain_params']['shape']
 
+        # self.wind = Wind(params['weather_params'])
+        # self.humidity = Humidity(params['weather_params'])
         
         self.forest_density = params['forest_params']['forest_density']
         self.forest_mixture = params['forest_params']['forest_mixture']
@@ -38,27 +40,30 @@ class Forest:
                            'ember':set(),
                            'ash':set()
                            }
-        self.sampled_trees = random.sample(self.tree_lst, 10000)
+        
+        self.sampled_trees = random.sample(self.tree_lst, 20000)
 
 
     def _forest_gen(self, tree_params):
         ''' generate collection of trees over the terrain '''
         
-        p1, p2 = self.shape
-        
-        coords_x_y = [(x, y) for x in range(self.terrain.width) 
-                             for y in range(self.terrain.length)]
+        p1, p2 = self.shape 
+        x0, y0,_, _ = utm.from_latlon(p1[0], p1[1])
         
         np_lat = np.linspace(p1[0], p2[0], num=self.terrain.width, endpoint=True)
         np_long = np.linspace(p1[1], p2[1], num=self.terrain.length, endpoint=True)
         coords_lat_lon = [(lat, long) for lat in list(np_lat) for long in list(np_long)]
         
-
+         
         self.tree_lst = list()
-        for lat_lon, x_y in zip(coords_lat_lon, coords_x_y): #TODO assert this is valid and generalizes
+        for lat_lon in coords_lat_lon:  
             if random.random() > self.forest_density:
                 lat, lon = lat_lon
-                x, y = x_y
+                
+                x, y, _, _ = utm.from_latlon(lat, lon)
+                x -= x0
+                y -= y0
+                
                 altitude = self.terrain.interpolated_lat_lon_alt(lat, lon)
                 altitude_cart = self.terrain.interpolated_cartesian(x, y)
                 
@@ -81,7 +86,10 @@ class Forest:
 
         for t in self.tree_lst:
             x, y, _ = t.x_y
-            self.quadrants[x // d][y // d].append(t)
+            try:
+                self.quadrants[x // d][y // d].append(t)
+            except:
+                print(x, y)
 
 
     def _nearest_trees(self):
@@ -139,29 +147,33 @@ class Forest:
         colors = {'unburnt':'green',
                   'burning':'red',
                   'ember':'orange',
-                  'ash':'black'}
+                  'ash':'grey'}
  
         coords = [t.lat_lon for t in self.sampled_trees]
-        color = [colors[t.state] for t in self.sampled_trees]
-        # size = [size_tree(t.height) for t in self.tree_lst]
-        x, y, z = list(map(list, zip(*coords)))
+        x_y = [t.x_y for t in self.sampled_trees]
+
+        color = [colors[t.state] for t in self.sampled_trees] 
+        lat, lon, z = list(map(list, zip(*coords)))
+        x, y, z = list(map(list, zip(*x_y))) 
+
+        ax1 = plt.subplot(212) 
+        ax1.scatter(lat, lon, c=color, s=2, alpha=0.3)
         
-        fig, axs = plt.subplots(1, 2, gridspec_kw={'width_ratios': [1, 1]})
-        axs[0].scatter(x, y, c=color, s=2, alpha=0.3)
-        axs[1].scatter(x, y, c=z, s=2, alpha=0.3)
+        ax2 = plt.subplot(221) 
+        ax2.scatter(lat, lon, c=z, s=2, alpha=0.3)
+        ax2.set_title('Lat Long')
+        # plt.colorbar(ax2)
+        
+        ax3 = plt.subplot(222) 
+        ax3.scatter(y, x, c=z, s=3, alpha=0.3)
+        ax3.set_title('Meters') 
+        # plt.colorbar(ax3)
+ 
 
-
-
-    def reset_forest(self):
+    def reset_forest(self, params):
         ''' aux method to replicate simulation '''
-        self.tree_state = {'unburnt': set(self.tree_lst),
-                           'burning':set(),
-                           'burning_recent':set(),
-                           'ember':set(),
-                           'ash':set()
-                           }        
-        for t in self.tree_lst:
-            t.state = 'unburnt'
+        self._forest_gen(params['tree_params'])
 
 #%%
+
  
