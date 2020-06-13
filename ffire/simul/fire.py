@@ -1,7 +1,7 @@
 
 # from math import sqrt
 from simul.forest import Forest
-from simul.utils import dist, bearing
+from simul.utils import dist#, bearing
 # from simul.weather import Wind, Humidity
 # from math import cos
 
