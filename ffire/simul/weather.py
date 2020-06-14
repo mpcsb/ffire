@@ -15,9 +15,10 @@ class Weather():
  
 
 class Wind():
-    def __init__(self, altitude=10):
-        self.altitude = altitude # ability to create several layers, by altitude
-    
+    def __init__(self, params):
+        self.altitude = 10 # ability to create several layers, by altitude
+        self.speed = params['weather_params']['speed']
+        self.angle = params['weather_params']['degree']
     
     def update_wind(self, speed, angle):
         self.speed = speed

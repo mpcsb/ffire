@@ -39,9 +39,10 @@ class Forest:
                            'ash':set()
                            }
         try:
-            self.sampled_trees = random.sample(self.tree_lst, 20000)
+            self.sampled_trees = random.sample(self.tree_lst, 5000)
         except:
             self.sampled_trees = self.tree_lst
+
 
     def _forest_gen(self, tree_params):
         ''' generate collection of trees over the terrain '''
@@ -179,13 +180,13 @@ class Forest:
     #     # ax3.set_title('Meters') 
     #     # # plt.colorbar(ax3)
  
-    def plot(self): 
+    def plot(self, angle = 60): 
         colors = {'unburnt':'green',
                   'burning':'red',
                   'ember':'orange',
                   'ash':'grey'} 
         
-        x_y = [t.x_y for t in self.sampled_trees]
+        x_y = [t.lat_lon for t in self.sampled_trees]
 
         color = [colors[t.state] for t in self.sampled_trees]  
         x, y, z = list(map(list, zip(*x_y))) 
@@ -194,13 +195,10 @@ class Forest:
         y = np.array(y)#.reshape(self.terrain.num_points, self.terrain.num_points)
         z = np.array(z)#.reshape(self.terrain.num_points, self.terrain.num_points)
          
-        
-        angle = 60
+         
         ax = Axes3D(plt.figure(figsize=(15, 15)))
         ax.scatter(x, y, z, c=color, marker='^') 
-        ax.view_init(45, angle) 
-        # ax.plot_surface(x, y, z, cmap=plt.cm.viridis, cstride=1, rstride=1, alpha=0.5) 
-        # ax.view_init(45, angle) 
+        ax.view_init(35, angle)  
         plt.show() 
             
             

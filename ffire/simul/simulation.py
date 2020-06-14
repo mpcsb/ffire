@@ -11,17 +11,20 @@ class simulation_run():
         self.fire.start_fire()
         # self.fire.forest.terrain.plot3d(30)
         print(f'Width:{self.fire.forest.terrain.width} Length:{self.fire.forest.terrain.length}')
- 
+        
+        angle = 60
         it = 0
         while len(self.fire.forest.tree_state['burning']) > 0 or\
-            (len(self.fire.forest.tree_state['burning']) == 0 and len(self.fire.forest.tree_state['ember']) > 0):
+            (len(self.fire.forest.tree_state['burning']) == 0 
+             and len(self.fire.forest.tree_state['ember']) > 0):
                 
             self.update_fire(verbose=True)
             state = [t.state for t in self.fire.forest.tree_lst]
             print(Counter(state))
-        
-            if it % 2 == 0:
-                self.fire.forest.plot()
+            
+            if it % 1 == 0:
+                self.fire.forest.plot(angle)
+                angle += 3
                 plt.show()
             it += 1
    
@@ -34,23 +37,12 @@ class simulation_run():
 
         recent_burns = list()
         for tree in self.fire.forest.tree_state['unburnt']: 
-            self.fire.fire_potential(tree)
-            # print(tree.burning_prob)
+            self.fire.fire_potential(tree) 
             if tree.burning_prob > random.random(): 
                 tree.state = 'burning'
                 tree.burning_prob = 1.0
                 recent_burns.append(tree)  
-            # try:
-            #     adjacent_trees = set([t for (d, t) in self.fire.forest.neighbours[tree]])
-            # except KeyError:
-            #     continue
-            
-            # for t in adjacent_trees:
-            #     if t.state == 'unburnt':
-            #         t.state = 'burning'
-            #         t.burning_prob = 1.0
-            #         recent_burns.append(t)
-
+                
         if len(recent_burns) > 0: # update state dict
             for t in recent_burns:
                 if t in self.fire.forest.tree_state['unburnt']:
@@ -66,7 +58,7 @@ class simulation_run():
         ''' determines tree transition from burning to ember '''
 
         for t in self.fire.forest.tree_state['burning'].copy():
-            t.fuel_perc -= 2 # constant decrease in fuel [TODO] contextual
+            t.fuel_perc -= 2 # TODO constant decrease in fuel -> to be contextual
             if t.fuel_perc <= 10: # at this point it will turn to ember (?)
                 if t.state == 'burning':
                     t.state = 'ember'
@@ -79,14 +71,14 @@ class simulation_run():
 
         for t in self.fire.forest.tree_state['ember'].copy():
             t.fuel_perc -= 0.3 # 1 % decrease each iteration
-            if t.fuel_perc <= 0: # [TODO] makes this probabillistic
+            if t.fuel_perc <= 0: # TODO: makes this probabillistic
                 t.state = 'ash'
                 self.fire.forest.tree_state['ash'].add(t)
                 self.fire.forest.tree_state['ember'].remove(t)
 
 
     def update_fire(self, verbose=False):
-        self.fire.wind.update_wind(4, 30)
+        # self.fire.wind.update_wind(4, 30)
         self._spread_fire()
         self._eval_burning_trees()
         self._eval_embers()

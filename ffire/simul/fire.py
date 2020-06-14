@@ -40,27 +40,34 @@ class Fire():
         '''
         Receives an unburnt or ember tree
         '''
-        # print(t1.x_y)
         x, y, _ = t1.x_y
         x_quadrant = x // self.forest.safe_radius
-        y_quadrant = y // self.forest.safe_radius
-        # print('quads', x_quadrant, y_quadrant)
+        y_quadrant = y // self.forest.safe_radius 
 
-        neighbour_trees = self.forest.adjacent_trees(x_quadrant, y_quadrant)
-        # print('neighbours', len(neighbour_trees))
-        burning_neighbours = [t for t in neighbour_trees if t.state == 'burning']
-        # print('burning_neighbours', len(burning_neighbours))
-        cnt = 0
-        for t2 in burning_neighbours:
-            x2, y2, _ = t2.x_y
-            A,B,C,D = self.wind.fire_projection(x2, y2, self.forest.safe_radius)
+        neighbour_trees = self.forest.adjacent_trees(x_quadrant, y_quadrant) 
+        burning_neighbours = [t for t in neighbour_trees if t.state == 'burning'] 
+        
+        if len(burning_neighbours) == 0:
+            pass
+        else:
+            cnt = 0
+            dist_lst = list()
             
-            extremes = [(min(p), max(p))for p in zip(A,B,C,D)]
-            
-            if (extremes[0][0] <= x <= extremes[0][1] 
-                and extremes[1][0] <= y <= extremes[1][1]):
-                cnt += 1
-            # print(t1.x_y, cnt, sigmoid(cnt))
-            t1.burning_prob = sigmoid(cnt)
+            for t2 in burning_neighbours:
+                x2, y2, _ = t2.x_y
+                A,B,C,D = self.wind.fire_projection(x2, y2, self.forest.safe_radius)
+                extremes = [(min(p), max(p))for p in zip(A,B,C,D)]
+                
+                if (extremes[0][0] <= x <= extremes[0][1] 
+                    and extremes[1][0] <= y <= extremes[1][1]):
+                    cnt += 1 
+                    dist_lst.append(dist(t1.x_y, t2.x_y))
+                if len(dist_lst) > 0:
+                    mean_distance = sum(dist_lst) / len(dist_lst)
+                    factor = cnt / (mean_distance +1)
+                    # print(cnt, factor, sigmoid(factor))
+                else:
+                    factor = 0.0
+            t1.burning_prob = sigmoid(factor) * 0.8
         
  
