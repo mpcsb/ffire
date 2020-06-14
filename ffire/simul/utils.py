@@ -47,3 +47,7 @@ def bearing(p1, p2):
         bearing = bearing + 360;
          
     return bearing
+ 
+
+def sigmoid(x):
+  return 1 / (1 + math.exp(-x))

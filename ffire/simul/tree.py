@@ -11,13 +11,12 @@ import numpy as np
 class Tree():
     def __init__(self, tree_params, lat_lon, x_y):
         h = tree_params['type']['height']
-        self.height = np.random.normal(h, h * 0.2)
-        self.type = tree_params['type'] # dict containing properties of tree:
-                                   # species name, radius, burn ability, ...
+        self.height = np.random.normal(h, h * 0.2) # should be weibul
+        self.type = tree_params['type'] 
         self.fuel_perc = self.height * np.random.normal(10, 1) # how burnt the tree is
 
         self.state = 'unburnt' 
-        # self.safe_radius = tree_params['safe_radius'] # https://www.tandfonline.com/doi/full/10.1080/21580103.2016.1144541
+        self.burning_prob = 0.0
         self.lat_lon = lat_lon
         self.x_y = x_y
 

@@ -1,76 +1,85 @@
-
-import os
-os.chdir(r'C:\Users\Miguel\Documents\repos\ffire\ffire')
-
+from simul.fire import Fire
 import matplotlib.pyplot as plt
 from collections import Counter
-from pylab import rcParams
-rcParams['figure.figsize'] = 10, 7.5
+import random
 
-# from simul.forest import Forest
-from simul.fire import Fire
-from resources import tree_db as tb
-from resources import soil_db as sb
-
-tree_db = tb.tree_db
-soil_db = sb.soil_db
-
-
-params = dict()
-params['forest_params'] = dict()
-params['forest_params']['forest_mixture'] = 0.5
-#Tree density in primary forests varies from 50,000-100,000 trees per square km
-params['forest_params']['forest_density'] = 0.92 # 0.9 - 0.95
-params['forest_params']['safe_radius'] = 6.0
-
-params['terrain_params'] = dict()
-# params['terrain_params']['shape'] = [(r, c) for r in range(1200) for c in range(1000)]
-# p1 = 38.706934, -9.316414
-p1 = 38.709934, -9.333414
-p2 = 38.753648, -9.307820
-params['terrain_params']['shape'] = (p1, p2)
-params['terrain_params']['num_points'] = 20
-
-params['terrain_params']['soil'] = 'grass'
-
-params['tree_params'] = dict()
-params['tree_params']['type'] = tree_db['pine']
-params['tree_params']['ember'] = False
-params['tree_params']['burning'] = False
-
-params['fire_params'] = dict()
-params['fire_params']['starting_tree_coords'] = (200, 640, 0)
- 
-
-params['weather_params'] = dict()
-params['weather_params']['degree'] = 35
-params['weather_params']['speed'] = 10
-
-fire = Fire(params)
-fire.start_fire()
-fire.forest.terrain.plot3d(60)
-print(f'Width:{fire.forest.terrain.width} Length:{fire.forest.terrain.length}')
-
-#%%
-# fire.forest.reset_forest()
-# fire.start_fire()
-#%%
-it = 0
-while len(fire.forest.tree_state['burning']) > 0 or\
-    (len(fire.forest.tree_state['burning']) == 0 and len(fire.forest.tree_state['ember']) > 0):
+class simulation_run():
+    
+    def __init__(self, params):
         
-    fire.update_fire(verbose=True)
-    state = [t.state for t in fire.forest.tree_lst]
-    print(Counter(state))
+        self.fire = Fire(params)
+        self.fire.start_fire()
+        # self.fire.forest.terrain.plot3d(30)
+        print(f'Width:{self.fire.forest.terrain.width} Length:{self.fire.forest.terrain.length}')
+        
+        angle = 60
+        it = 0
+        while len(self.fire.forest.tree_state['burning']) > 0 or\
+            (len(self.fire.forest.tree_state['burning']) == 0 
+             and len(self.fire.forest.tree_state['ember']) > 0):
+                
+            self.update_fire(verbose=True)
+            state = [t.state for t in self.fire.forest.tree_lst]
+            print(Counter(state))
+            
+            if it % 1 == 0:
+                self.fire.forest.plot(angle)
+                angle += 3
+                plt.show()
+            it += 1
+   
 
-    if it % 10 == 0:
-        fire.forest.plot()
-        plt.show()
+    def _spread_fire(self):
+        '''
+        iterates all burning trees
+        updates forest variables burning_trees list and safe_tree
+        '''
 
-    it += 1
-#%% 
+        recent_burns = list()
+        for tree in self.fire.forest.tree_state['unburnt']: 
+            self.fire.fire_potential(tree) 
+            if tree.burning_prob > random.random(): 
+                tree.state = 'burning'
+                tree.burning_prob = 1.0
+                recent_burns.append(tree)  
+                
+        if len(recent_burns) > 0: # update state dict
+            for t in recent_burns:
+                if t in self.fire.forest.tree_state['unburnt']:
+                    self.fire.forest.tree_state['burning'].add(t)
+                    self.fire.forest.tree_state['unburnt'].remove(t)
+            self.fire.forest.tree_state['burning_recent'] = list(recent_burns)
+        else:
+            self.fire.forest.tree_state['burning_recent'] = []
 
-for t in fire.forest.tree_lst:
-    print(t.x_y , t.lat_lon )
-#%%
-qq = fire.forest.quadrants
+
+
+    def _eval_burning_trees(self):
+        ''' determines tree transition from burning to ember '''
+
+        for t in self.fire.forest.tree_state['burning'].copy():
+            t.fuel_perc -= 2 # TODO constant decrease in fuel -> to be contextual
+            if t.fuel_perc <= 10: # at this point it will turn to ember (?)
+                if t.state == 'burning':
+                    t.state = 'ember'
+                    self.fire.forest.tree_state['ember'].add(t)
+                    self.fire.forest.tree_state['burning'].remove(t)
+
+
+    def _eval_embers(self):
+        ''' determines tree transition from ember to charcoal'''
+
+        for t in self.fire.forest.tree_state['ember'].copy():
+            t.fuel_perc -= 0.3 # 1 % decrease each iteration
+            if t.fuel_perc <= 0: # TODO: makes this probabillistic
+                t.state = 'ash'
+                self.fire.forest.tree_state['ash'].add(t)
+                self.fire.forest.tree_state['ember'].remove(t)
+
+
+    def update_fire(self, verbose=False):
+        # self.fire.wind.update_wind(4, 30)
+        self._spread_fire()
+        self._eval_burning_trees()
+        self._eval_embers()
+ 
