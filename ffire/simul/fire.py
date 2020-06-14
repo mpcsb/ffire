@@ -1,15 +1,17 @@
 
-# from math import sqrt
+from collections import Counter
+
 from simul.forest import Forest
-from simul.utils import dist#, bearing
-# from simul.weather import Wind, Humidity
-# from math import cos
+from simul.utils import dist, sigmoid#, bearing
+from simul.weather import Wind, Humidity
+ 
 
 class Fire():
     
     def __init__(self, params):
 
         self.forest = Forest(params)
+        self.wind = Wind(params)
 
         
         # distance of all trees to starting tree.
@@ -34,26 +36,31 @@ class Fire():
         # self.forest.tree_state['recent_burn'].add(starting_tree)
 
 
-    # def potential(self):
-    #     ''' generates a dictionary with the nearest trees up to a distance '''
-    #     self.forest.burnable = dict()
-        
-    #     for t1 in self.forest.tree_lst:
-    #         x, y, _ = t1.x_y
-    #         x_quadrant = x // self.forest.safe_radius
-    #         y_quadrant = y // self.forest.safe_radius
+    def fire_potential(self, t1):
+        '''
+        Receives an unburnt or ember tree
+        '''
+        # print(t1.x_y)
+        x, y, _ = t1.x_y
+        x_quadrant = x // self.forest.safe_radius
+        y_quadrant = y // self.forest.safe_radius
+        # print('quads', x_quadrant, y_quadrant)
 
-    #         comparable_trees = self.forest.__adjacent_trees(x_quadrant, y_quadrant)
+        neighbour_trees = self.forest.adjacent_trees(x_quadrant, y_quadrant)
+        # print('neighbours', len(neighbour_trees))
+        burning_neighbours = [t for t in neighbour_trees if t.state == 'burning']
+        # print('burning_neighbours', len(burning_neighbours))
+        cnt = 0
+        for t2 in burning_neighbours:
+            x2, y2, _ = t2.x_y
+            A,B,C,D = self.wind.fire_projection(x2, y2, self.forest.safe_radius)
             
-    #         for t2 in comparable_trees:
-    #             d = dist(t1.x_y, t2.x_y)
-    #             b = bearing(t1.lat_lon, t2.lat_lon)
-                
-    #             fire_range = d*cos(b) * (self.wind.speed * cos(self.wind.angle))
-                
-    #             if 0.0 < d < self.forest.safe_radius:
-    #                 if t1 in self.forest.burnable.keys():
-    #                     self.forest.burnable[t1].append((d, t2))
-    #                 else:
-    #                     self.forest.burnable[t1] = [(d, t2)]
-
+            extremes = [(min(p), max(p))for p in zip(A,B,C,D)]
+            
+            if (extremes[0][0] <= x <= extremes[0][1] 
+                and extremes[1][0] <= y <= extremes[1][1]):
+                cnt += 1
+            # print(t1.x_y, cnt, sigmoid(cnt))
+            t1.burning_prob = sigmoid(cnt)
+        
+ 

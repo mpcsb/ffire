@@ -15,7 +15,8 @@ class Tree():
         self.type = tree_params['type'] 
         self.fuel_perc = self.height * np.random.normal(10, 1) # how burnt the tree is
 
-        self.state = 'unburnt'  
+        self.state = 'unburnt' 
+        self.burning_prob = 0.0
         self.lat_lon = lat_lon
         self.x_y = x_y
 

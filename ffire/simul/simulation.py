@@ -1,7 +1,7 @@
 from simul.fire import Fire
 import matplotlib.pyplot as plt
 from collections import Counter
-
+import random
 
 class simulation_run():
     
@@ -9,7 +9,7 @@ class simulation_run():
         
         self.fire = Fire(params)
         self.fire.start_fire()
-        self.fire.forest.terrain.plot3d(60)
+        # self.fire.forest.terrain.plot3d(30)
         print(f'Width:{self.fire.forest.terrain.width} Length:{self.fire.forest.terrain.length}')
  
         it = 0
@@ -20,12 +20,12 @@ class simulation_run():
             state = [t.state for t in self.fire.forest.tree_lst]
             print(Counter(state))
         
-            if it % 10 == 0:
+            if it % 2 == 0:
                 self.fire.forest.plot()
                 plt.show()
             it += 1
-  
-    
+   
+
     def _spread_fire(self):
         '''
         iterates all burning trees
@@ -33,25 +33,33 @@ class simulation_run():
         '''
 
         recent_burns = list()
-        for tree in self.fire.forest.tree_state['burning']:
-            try:
-                adjacent_trees = set([t for (d, t) in self.fire.forest.neighbours[tree]])
-            except KeyError:
-                continue
+        for tree in self.fire.forest.tree_state['unburnt']: 
+            self.fire.fire_potential(tree)
+            # print(tree.burning_prob)
+            if tree.burning_prob > random.random(): 
+                tree.state = 'burning'
+                tree.burning_prob = 1.0
+                recent_burns.append(tree)  
+            # try:
+            #     adjacent_trees = set([t for (d, t) in self.fire.forest.neighbours[tree]])
+            # except KeyError:
+            #     continue
             
-            for t in adjacent_trees:
-                if t.state == 'unburnt':
-                    t.state = 'burning'
-                    recent_burns.append(t)
+            # for t in adjacent_trees:
+            #     if t.state == 'unburnt':
+            #         t.state = 'burning'
+            #         t.burning_prob = 1.0
+            #         recent_burns.append(t)
 
         if len(recent_burns) > 0: # update state dict
             for t in recent_burns:
                 if t in self.fire.forest.tree_state['unburnt']:
                     self.fire.forest.tree_state['burning'].add(t)
                     self.fire.forest.tree_state['unburnt'].remove(t)
-            self.fire.forest.tree_state['burning_recent'] = list(adjacent_trees)
+            self.fire.forest.tree_state['burning_recent'] = list(recent_burns)
         else:
             self.fire.forest.tree_state['burning_recent'] = []
+
 
 
     def _eval_burning_trees(self):
@@ -78,6 +86,7 @@ class simulation_run():
 
 
     def update_fire(self, verbose=False):
+        self.fire.wind.update_wind(4, 30)
         self._spread_fire()
         self._eval_burning_trees()
         self._eval_embers()

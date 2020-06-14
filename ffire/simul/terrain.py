@@ -14,7 +14,7 @@ import gc
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import sys
+# import sys
 
 
 class Terrain():
@@ -81,10 +81,13 @@ class Terrain():
         p1 = [p[1] for p in coordinates] # lon 
         p2 = [float(p[2]) for p in coordinates] # z 
         
-        # initial point will serve as the reference
+        # minimum point (corner) in initial tile        
         x0, y0,_, _ = utm.from_latlon(self.shape[0][0], self.shape[0][1])
-        p3 = [p[3] - x0 for p in coordinates] # x  
-        p4 = [p[4] - y0 for p in coordinates] # y  
+        x1, y1,_, _ = utm.from_latlon(self.shape[1][0], self.shape[1][1])
+        min_x = min(x0, x1)
+        min_y = min(y0, y1)
+        p3 = [p[3] - min_x for p in coordinates] # x  
+        p4 = [p[4] - min_y for p in coordinates] # y  
  
         self.interpolated_cartesian = interpolate.interp2d(p3, p4, p2, kind='linear')
         self.interpolated_lat_lon_alt = interpolate.interp2d(p0, p1, p2, kind='linear') 
@@ -106,7 +109,7 @@ class Terrain():
          
         for angle in range(0, 360, angle):
         # angle = 60
-            ax = Axes3D(plt.figure(figsize=(10,10)))
+            ax = Axes3D(plt.figure(figsize=(15, 15)))
             ax.plot_surface(x, y, z, cmap=plt.cm.viridis, cstride=1, rstride=1) 
             ax.view_init(30, angle) 
             plt.show() 
