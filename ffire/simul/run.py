@@ -31,19 +31,22 @@ params['terrain_params']['soil'] = 'grass'
 
 params['tree_params'] = dict()
 params['tree_params']['type'] = tree_db['pine']
-
-
+ 
 params['fire_params'] = dict()
 params['fire_params']['starting_tree_coords'] = (160, 160, 0)
- 
-
+  
 params['weather_params'] = dict()
 params['weather_params']['degree'] = 90
 params['weather_params']['speed'] = 0
 
 
-s = simulation_run(params)
+#%%
+    
+import mock # To run tests, `pip install mock==2.0.0`
+suite = unittest.defaultTestLoader.loadTestsFromName(__name__)
+result = unittest.TextTestRunner(verbosity=2).run(suite)
+exit(0 if result.wasSuccessful() else 1)
 
 #%%
-for t in s.fire.forest.tree_lst:
-    s.fire.fire_potential()
+ 
+s = simulation_run(params)

@@ -6,6 +6,7 @@ Created on Wed Jun 10 23:14:50 2020
 """
 import math
 from math import sqrt
+import unittest
 
 def dist(p, q):
     '''
@@ -51,3 +52,13 @@ def bearing(p1, p2):
 
 def sigmoid(x):
   return 1 / (1 + math.exp(-x))
+
+
+
+class TestUtils (unittest.TestCase):
+
+    def test_dist(self):
+        p = (1, 2, 3)
+        q = (3, 4, 5)
+        self.assertEqual(dist(p, q), 2.8284271247461903) 
+        self.assertEqual(dist(q, p), 3.4641016151377544) 
