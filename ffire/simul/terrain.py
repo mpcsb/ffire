@@ -11,7 +11,8 @@ import utm
 from scipy import interpolate
 from tqdm import tqdm
 import gc
-
+from gmalthgtparser import HgtParser   
+import gzip
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
  
@@ -23,10 +24,13 @@ class Terrain():
         self.shape = terrain_params['shape'] # collection of points or GIS data
         self.num_points = terrain_params['num_points']
          
-        self.lat_lon_alt = self._sample_altitude(self.shape[0], self.shape[1], self.num_points) 
-
+        # self.lat_lon_alt = self._sample_altitude(self.shape[0], self.shape[1], self.num_points) 
+        self.lat_lon_alt = self.generate_topology(self.shape[0], self.shape[1], self.num_points)
+        
         self._gen_dimensions()
+        print(self.width, self.length)
         self.points = self._gen_coordinates()
+        
 
 
     def _gen_dimensions(self):
@@ -35,8 +39,80 @@ class Terrain():
         
         self.width = int(abs(x1 - x2))
         self.length = int(abs(y1 - y2))
+
+
+    @staticmethod
+    def filename_gen(lat, lon):
+        if lat >= 0: 
+            fname = 'N'
+            if lat >= 10:
+                fname += str(lat)
+            else:
+                fname += '0' + str(lat)
+        else:
+            fname = 'S'
+            if abs(lat) >= 10:
+                fname += str(lat)
+            else:
+                fname += '0' + str(lat)
+                
+        if lon > 0:
+            fname += 'E'
+            if lon >= 100:
+                fname +=str(lon)
+            elif lon >= 10:
+                fname += '0' + str(lon)
+            else:
+                fname += '00' + str(lon)
+        else:
+            fname += 'W'
+            if abs(lon) >= 100:
+                fname += str(abs(lon))
+            elif abs(lon) >= 10:
+                fname += '0' + str(abs(lon))
+            else:
+                fname += '00' + str(abs(lon))
+        fname += '.hgt.gz'
+        return  fname
+    
+    
+    def generate_topology(self, p1, p2, n_points = 20, verbose=True):
+        import os
+        from math import floor
+        os.chdir(r'C:\Users\Miguel\Documents\repos\ffire\elevation_data')
+        
+        np_lat = np.linspace(p1[0], p2[0], num=n_points, endpoint=True)
+        np_long = np.linspace(p1[1], p2[1], num=n_points, endpoint=True)
+        coords_lat_lon = [(lat, long) for lat in list(np_lat) for long in list(np_long)]
         
         
+        lat = floor(p1[0])
+        lon = floor(p1[1])
+         
+        filename = self.filename_gen(lat, lon)
+        path = filename[:3] + '/' + filename
+        decompressed_file = filename.replace('.gz', '')
+        
+         
+        content = gzip.open(path).read()
+         
+        f = open(decompressed_file, 'wb')
+        f.write(content)
+        f.close()
+        
+        
+        terrain = list()
+        with HgtParser(decompressed_file) as parser:
+            with tqdm(total=n_points**2) as pbar:
+                for i, coord in enumerate(coords_lat_lon):  
+                    lat_, lon_ = coord 
+                    alt = parser.get_elevation((lat_, lon_))
+                    terrain.append((lat_, lon_, alt[2]))
+                    pbar.update(1)
+        os.remove(decompressed_file) 
+        return terrain
+    
+    
     def _sample_altitude(self, p1, p2, n_points = 20, verbose=True): 
         
         def url(lat, long):
@@ -72,10 +148,12 @@ class Terrain():
         ''' 
         
         coordinates = list() # (lat, long, z, x, y)
-        for point in self.lat_lon_alt:
-            lat, lon, z = point
-            x, y, _, _ = utm.from_latlon(lat, lon)
-            coordinates.append((lat, lon, z, x, y))  
+        with tqdm(total=n_points**2) as pbar:
+            for point in self.lat_lon_alt:
+                lat, lon, z = point
+                x, y, _, _ = utm.from_latlon(lat, lon)
+                coordinates.append((lat, lon, z, x, y))
+                pbar.update(1)
         
         p0 = [p[0] for p in coordinates] # lat 
         p1 = [p[1] for p in coordinates] # lon 
@@ -88,10 +166,13 @@ class Terrain():
         min_y = min(y0, y1)
         p3 = [p[3] - min_x for p in coordinates] # x  
         p4 = [p[4] - min_y for p in coordinates] # y  
- 
+        
+        print('interpolation started')
         self.interpolated_cartesian = interpolate.interp2d(p3, p4, p2, kind='linear')
+        print('interpolation cartesian')
         self.interpolated_lat_lon_alt = interpolate.interp2d(p0, p1, p2, kind='linear') 
-         
+        print('interpolation geo')
+        
         points = [(lat, lon, z, x, y) for lat, lon, z, x, y in 
                               zip(p0, p1, p2, p3, p4)] 
         gc.collect()

@@ -18,11 +18,10 @@ import numpy as np
 p1 = 38.798802, -9.332599
 p2 = 38.790060, -9.350210 
 
-np_lat = np.linspace(p1[0], p2[0], num=10, endpoint=True)
-np_long = np.linspace(p1[1], p2[1], num=10, endpoint=True)
+np_lat = np.linspace(p1[0], p2[0], num=20, endpoint=True)
+np_long = np.linspace(p1[1], p2[1], num=20, endpoint=True)
 coords_lat_lon = [(lat, long) for lat in list(np_lat) for long in list(np_long)]
 
-# tile_corners = [(35.16, 12.71),(35.77, 12.98)]
 
 lat = floor(p1[0])
 lon = floor(p1[1])
@@ -74,11 +73,11 @@ f.close()
 
  
 #%%
-
+terrain = list()
 with HgtParser(decompressed_file) as parser:
     for coord in coords_lat_lon:   
         lat_, lon_ = coord 
         alt = parser.get_elevation((lat_, lon_))
-        print(lat_, lon_, alt[2])
+        terrain.append((lat_, lon_, alt[2]))
 os.remove(decompressed_file)
 

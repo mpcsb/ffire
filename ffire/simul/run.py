@@ -19,13 +19,13 @@ params['forest_params'] = dict()
 params['forest_params']['forest_mixture'] = 0.5
 #Tree density in primary forests varies from 50,000-100,000 trees per square km
 params['forest_params']['forest_density'] = 0.95 # 0.9 - 0.95
-params['forest_params']['safe_radius'] = 3.0 # https://www.tandfonline.com/doi/full/10.1080/21580103.2016.1144541
+params['forest_params']['safe_radius'] = 6.0 # https://www.tandfonline.com/doi/full/10.1080/21580103.2016.1144541
 
 params['terrain_params'] = dict() 
-p1 = 38.798802, -9.332599
-p2 = 38.790060, -9.350210
+p1 = 38.738802, -9.332599
+p2 = 38.790060, -9.390210
 params['terrain_params']['shape'] = (p1, p2)
-params['terrain_params']['num_points'] = 5
+params['terrain_params']['num_points'] = 100
 
 params['terrain_params']['soil'] = 'grass'
 
@@ -39,14 +39,8 @@ params['weather_params'] = dict()
 params['weather_params']['degree'] = 90
 params['weather_params']['speed'] = 0
 
-
-#%%
-    
-import mock # To run tests, `pip install mock==2.0.0`
-suite = unittest.defaultTestLoader.loadTestsFromName(__name__)
-result = unittest.TextTestRunner(verbosity=2).run(suite)
-exit(0 if result.wasSuccessful() else 1)
+ 
+s = simulation_run(params)
 
 #%%
  
-s = simulation_run(params)

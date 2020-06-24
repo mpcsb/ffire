@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from collections import Counter
 import random
 
+
+
 class simulation_run():
     
     def __init__(self, params):
