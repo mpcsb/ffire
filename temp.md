@@ -1,9 +1,10 @@
 # H2O Olympics | Wildfire Challenge Submission
+# Forest fire (ffire) simulation to assess wildfire risk
 
-## Forest fire (ffire) simulation to assess wildfire risk
 
+### Introduction
 This submission is the implementation of an idea that focus around simulating fire dynamics (a complex process that is of course too ambitious for a project of this duration).  
-The main ideas behind the data generating process is to utilize geometrical properties of the terrain and simulate the behavior of other factors in wind propagation (e.g. wind).  
+The main ideas behind the data generating process is to utilize geometrical properties of the any terrain worldwide and simulate the behavior of other factors in wind propagation (e.g. wind).  
 The purpose of this tool is to assess risk in order to minimize real estate activity in areas where firefighting should be particularly hard. This can be assessed by analyzing the simulations and looking at the rate of burning trees per iteration, for instance.  
 
 ### Output  
@@ -21,3 +22,11 @@ This application requires a parameter dictionary that will be used in roughly th
 6. With each iteration, trees will start to burn and will continue to propagate fire to their adjacent trees (all those that fall in the range of flammability define in the parameters).  
 
 ## Future features and caveats to current application state  
+1. interactions between trees are at this point naively implemented and are very costly to run - taking some minutes to run a simulation for terrains with 100k+ trees. This will be replaced with vptrees or kdtree (implemented in sklearn). This should expand the hability of the model to simulate several square km at once.
+2. Humidity will be a variable dependent on the elevation aspect (facing north or other cardinal points). This will make wildfires propagate slowly in northen facing faces.  
+3. Wind is currently constant across all terrain points. An integration of wind ninja (wind simulation over terrain) is attempting to be integrated - this will need to be precomputed due to the weak UI of WN.  
+4. Additional viz will be created in order to make some aspects of the simulation easier to observe and possible to quantify.  
+5. The H2O wave app will be the frontend to be use: at this point it is still far from being presentable, but it does make all the calculations involved in the main steps of the simulation. Inclusion of plots and better(existing :)) user experience is planned for the final submission.  
+
+
+The wishlist of features to this simulation is without end, and all of these effects have very complex interactions: for the scope of this project this should be within what can be done.  
